@@ -23,12 +23,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"code.hooto.com/lynkdb/iomix/connect"
-	"code.hooto.com/lynkdb/iomix/skv"
-	"code.hooto.com/lynkdb/kvgo"
-	"github.com/eryx/freetype-go/freetype"
-	"github.com/eryx/freetype-go/freetype/truetype"
+	"github.com/golang/freetype"
+	"github.com/golang/freetype/truetype"
 	"github.com/lessos/lessgo/types"
+	"github.com/lynkdb/iomix/connect"
+	"github.com/lynkdb/iomix/skv"
+	"github.com/lynkdb/kvgo"
 )
 
 const (

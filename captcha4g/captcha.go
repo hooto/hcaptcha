@@ -22,8 +22,8 @@ import (
 	"math"
 	"math/rand"
 
-	"code.hooto.com/lynkdb/iomix/skv"
 	"github.com/lessos/lessgo/types"
+	"github.com/lynkdb/iomix/skv"
 )
 
 func Verify(token, word string) *types.ErrorMeta {
