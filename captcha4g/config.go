@@ -27,7 +27,7 @@ import (
 	"github.com/golang/freetype/truetype"
 	"github.com/lessos/lessgo/types"
 	"github.com/lynkdb/iomix/connect"
-	"github.com/lynkdb/iomix/skv"
+	"github.com/lynkdb/iomix/sko"
 	"github.com/lynkdb/kvgo"
 )
 
@@ -92,7 +92,7 @@ var (
 		fluctuation_amplitude: 0.2,
 	}
 	fonts         = FontList{}
-	DataConnector skv.Connector
+	DataConnector sko.ClientConnector
 )
 
 func Config(cfg Options) error {
@@ -119,7 +119,7 @@ func Config(cfg Options) error {
 
 		opts := connect.ConnOptions{
 			Name:      types.NewNameIdentifier("hcaptcha"),
-			Connector: "iomix/skv/Connector",
+			Connector: "iomix/sko/client-connector",
 			Driver:    types.NewNameIdentifier("lynkdb/kvgo"),
 		}
 		opts.SetValue("data_dir", cfg.DataDir)
