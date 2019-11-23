@@ -158,7 +158,7 @@ func ImageFetch(token string, reload bool) ([]byte, *types.ErrorMeta) {
 
 	if rs := DataConnector.NewWriter(_token_word_key(token), []byte(vyword)).
 		ExpireSet(gcfg.ImageExpiration).Commit(); !rs.OK() {
-		return []byte{}, &types.ErrorMeta{"ServerError", ""}
+		return []byte{}, &types.ErrorMeta{"ServerError " + rs.Message, ""}
 	}
 
 	if rs := DataConnector.NewWriter(_token_image_key(token), buf.Bytes()).

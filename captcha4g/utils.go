@@ -16,6 +16,7 @@ package captcha4g
 
 import (
 	"crypto/md5"
+	"encoding/hex"
 	"io"
 	"math/rand"
 	"runtime"
@@ -32,11 +33,11 @@ func _rand_float(from, to float64) float64 {
 }
 
 func _token_word_key(token string) []byte {
-	return append(_token_key_filter(token), 0x01)
+	return append(_token_key_filter(token), 'k')
 }
 
 func _token_image_key(token string) []byte {
-	return append(_token_key_filter(token), 0x02)
+	return append(_token_key_filter(token), 'i')
 }
 
 func _token_key_filter(token string) []byte {
@@ -48,5 +49,5 @@ func _token_key_filter(token string) []byte {
 	h := md5.New()
 	io.WriteString(h, token)
 
-	return h.Sum(nil)
+	return []byte(hex.EncodeToString(h.Sum(nil)))
 }
