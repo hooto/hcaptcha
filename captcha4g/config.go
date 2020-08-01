@@ -25,10 +25,8 @@ import (
 
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
-	"github.com/lessos/lessgo/types"
-	"github.com/lynkdb/iomix/connect"
-	"github.com/lynkdb/iomix/sko"
 	"github.com/lynkdb/kvgo"
+	kv2 "github.com/lynkdb/kvspec/go/kvspec/v2"
 )
 
 const (
@@ -37,18 +35,18 @@ const (
 
 type Options struct {
 	//
-	FontPath string `json:"font_path,omitempty"`
-	DataDir  string `json:"data_dir,omitempty"`
+	FontPath string `json:"font_path,omitempty" toml:"font_path,omitempty"`
+	DataDir  string `json:"data_dir,omitempty" toml:"data_dir,omitempty"`
 
 	// Standard width and height of a CAPTCHA image.
-	ImageWidth  int `json:"image_width,omitempty"`
-	ImageHeight int `json:"image_height,omitempty"`
+	ImageWidth  int `json:"image_width,omitempty" toml:"image_width,omitempty"`
+	ImageHeight int `json:"image_height,omitempty" toml:"image_height,omitempty"`
 
 	// RGB red, green, blue values for the color of a CAPTCHA image.
-	ImageColor []uint8 `json:"image_color,omitempty"`
+	ImageColor []uint8 `json:"image_color,omitempty" toml:"image_color,omitempty"`
 
 	// Expiration time (in milliseconds) of CAPTCHAs used by store.
-	ImageExpiration int64 `json:"image_expiration,omitempty"`
+	ImageExpiration int64 `json:"image_expiration,omitempty" toml:"image_expiration,omitempty"`
 
 	// Symbols used to draw CAPTCHA
 	//
@@ -57,14 +55,14 @@ type Options struct {
 	// Example:
 	//   symbols 34578acdekpsvxy
 	//   (!) alphabet without similar symbols (0=o, 1=l, 2=z, 6=b, 9=g, ...)
-	Symbols string `json:"symbols,omitempty"`
+	Symbols string `json:"symbols,omitempty" toml:"symbols,omitempty"`
 
 	// Default number of symbols in CAPTCHA solution.
-	LengthMin int `json:"length_min,omitempty"`
-	LengthMax int `json:"length_max,omitempty"`
+	LengthMin int `json:"length_min,omitempty" toml:"length_min,omitempty"`
+	LengthMax int `json:"length_max,omitempty" toml:"length_max,omitempty"`
 
 	//
-	ServerPort uint16 `json:"server_port,omitempty"`
+	ServerPort uint16 `json:"server_port,omitempty" toml:"server_port,omitempty"`
 
 	//  symbol's vertical fluctuation amplitude
 	fluctuation_amplitude float64
@@ -92,7 +90,7 @@ var (
 		fluctuation_amplitude: 0.2,
 	}
 	fonts         = FontList{}
-	DataConnector sko.ClientConnector
+	DataConnector kv2.Client
 )
 
 func Config(cfg Options) error {
@@ -117,12 +115,11 @@ func Config(cfg Options) error {
 			return err
 		}
 
-		opts := connect.ConnOptions{
-			Name:      types.NewNameIdentifier("hcaptcha"),
-			Connector: "iomix/sko/client-connector",
-			Driver:    types.NewNameIdentifier("lynkdb/kvgo"),
+		opts := &kvgo.Config{
+			Storage: kvgo.ConfigStorage{
+				DataDirectory: cfg.DataDir,
+			},
 		}
-		opts.SetValue("data_dir", cfg.DataDir)
 
 		if DataConnector, err = kvgo.Open(opts); err != nil {
 			return err
