@@ -18,22 +18,22 @@ import (
 	"github.com/hooto/httpsrv"
 )
 
-func WebServerModule() httpsrv.Module {
+func WebServerModule() *httpsrv.Module {
 
-	module := httpsrv.NewModule("hcaptcha")
+	module := httpsrv.NewModule()
 
-	module.ControllerRegister(new(Api))
+	module.RegisterController(new(Api))
 
 	return module
 }
 
 func WebServerStart() {
 
-	httpsrv.GlobalService.Config.HttpPort = gcfg.ServerPort
+	httpsrv.DefaultService.Config.HttpPort = gcfg.ServerPort
 
-	httpsrv.GlobalService.ModuleRegister("/hcaptcha", WebServerModule())
+	httpsrv.DefaultService.HandleModule("/hcaptcha", WebServerModule())
 
-	httpsrv.GlobalService.Start()
+	httpsrv.DefaultService.Start()
 }
 
 type Api struct {
