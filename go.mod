@@ -4,7 +4,7 @@ go 1.22.0
 
 require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
-	github.com/hooto/httpsrv v0.11.5
+	github.com/hooto/httpsrv v0.12.0
 	github.com/lessos/lessgo v1.0.0
 	github.com/lynkdb/kvgo v1.1.6
 	github.com/lynkdb/kvspec/v2 v2.0.4
@@ -13,7 +13,7 @@ require (
 require (
 	github.com/DataDog/zstd v1.5.2 // indirect
 	github.com/ServiceWeaver/weaver v0.15.0 // indirect
-	github.com/andybalholm/brotli v1.0.5 // indirect
+	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
