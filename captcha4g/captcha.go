@@ -21,40 +21,38 @@ import (
 	"image/png"
 	"math"
 	"math/rand"
-
-	"github.com/lessos/lessgo/types"
 )
 
-func Verify(token, word string) *types.ErrorMeta {
+func Verify(token, word string) *ErrorMeta {
 
 	if token == "" || word == "" {
-		return &types.ErrorMeta{"invalid-request", ""}
+		return &ErrorMeta{"invalid-request", ""}
 	}
 
 	if DataConnector == nil {
-		return &types.ErrorMeta{"hcaptcha-not-reachable", ""}
+		return &ErrorMeta{"hcaptcha-not-reachable", ""}
 	}
 
 	//
-	if rs := DataConnector.NewReader(_token_word_key(token)).Query(); !rs.OK() ||
-		rs.DataValue().String() != word {
-		return &types.ErrorMeta{"incorrect-hcaptcha-word", ""}
+	if rs := DataConnector.NewReader(_token_word_key(token)).Exec(); !rs.OK() ||
+		rs.Item().StringValue() != word {
+		return &ErrorMeta{"incorrect-hcaptcha-word", ""}
 	}
 
-	DataConnector.NewWriter(_token_word_key(token), _token_image_key(token)).Commit()
+	DataConnector.NewWriter(_token_word_key(token), _token_image_key(token)).Exec()
 
 	return nil
 }
 
-func ImageFetch(token string, reload bool) ([]byte, *types.ErrorMeta) {
+func ImageFetch(token string, reload bool) ([]byte, *ErrorMeta) {
 
 	if DataConnector == nil {
-		return []byte{}, &types.ErrorMeta{"hcaptcha-not-reachable", ""}
+		return []byte{}, &ErrorMeta{"hcaptcha-not-reachable", ""}
 	}
 
 	if !reload {
-		if rs := DataConnector.NewReader(_token_image_key(token)).Query(); rs.OK() {
-			return rs.DataValue().Bytes(), nil
+		if rs := DataConnector.NewReader(_token_image_key(token)).Exec(); rs.OK() {
+			return rs.Item().Value, nil
 		}
 	}
 
@@ -153,17 +151,17 @@ func ImageFetch(token string, reload bool) ([]byte, *types.ErrorMeta) {
 	buf := new(bytes.Buffer)
 
 	if err := png.Encode(buf, capwave); err != nil {
-		return []byte{}, &types.ErrorMeta{"ServerError", err.Error()}
+		return []byte{}, &ErrorMeta{"ServerError", err.Error()}
 	}
 
 	if rs := DataConnector.NewWriter(_token_word_key(token), []byte(vyword)).
-		ExpireSet(gcfg.ImageExpiration).Commit(); !rs.OK() {
-		return []byte{}, &types.ErrorMeta{"ServerError " + rs.Message, ""}
+		SetTTL(gcfg.ImageExpiration).Exec(); !rs.OK() {
+		return []byte{}, &ErrorMeta{"ServerError " + rs.ErrorMessage(), ""}
 	}
 
 	if rs := DataConnector.NewWriter(_token_image_key(token), buf.Bytes()).
-		ExpireSet(gcfg.ImageExpiration).Commit(); !rs.OK() {
-		return []byte{}, &types.ErrorMeta{"ServerError", ""}
+		SetTTL(gcfg.ImageExpiration).Exec(); !rs.OK() {
+		return []byte{}, &ErrorMeta{"ServerError " + rs.ErrorMessage(), ""}
 	}
 
 	return buf.Bytes(), nil

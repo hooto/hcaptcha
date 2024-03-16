@@ -25,8 +25,9 @@ import (
 
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
-	"github.com/lynkdb/kvgo"
-	kv2 "github.com/lynkdb/kvspec/v2/go/kvspec"
+	"github.com/lynkdb/kvgo/v2/pkg/kvapi"
+	"github.com/lynkdb/kvgo/v2/pkg/kvrep"
+	"github.com/lynkdb/kvgo/v2/pkg/storage"
 )
 
 const (
@@ -90,7 +91,7 @@ var (
 		fluctuation_amplitude: 0.2,
 	}
 	fonts         = FontList{}
-	DataConnector kv2.Client
+	DataConnector kvapi.Client
 )
 
 func Config(cfg Options) error {
@@ -115,13 +116,11 @@ func Config(cfg Options) error {
 			return err
 		}
 
-		opts := &kvgo.Config{
-			Storage: kvgo.ConfigStorage{
-				DataDirectory: cfg.DataDir,
-			},
+		opts := &storage.Options{
+			DataDirectory: cfg.DataDir,
 		}
 
-		if DataConnector, err = kvgo.Open(opts); err != nil {
+		if DataConnector, err = kvrep.NewReplica(opts); err != nil {
 			return err
 		}
 	}

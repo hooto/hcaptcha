@@ -20,11 +20,11 @@ import (
 
 func WebServerModule() *httpsrv.Module {
 
-	module := httpsrv.NewModule()
+	mod := httpsrv.NewModule()
 
-	module.RegisterController(new(Api))
+	mod.RegisterController(new(Api))
 
-	return module
+	return mod
 }
 
 func WebServerStart() {
@@ -42,8 +42,8 @@ type Api struct {
 
 func (c Api) VerifyAction() {
 
-	if err := Verify(c.Params.Get("hcaptcha_token"),
-		c.Params.Get("hcaptcha_word")); err != nil {
+	if err := Verify(c.Params.Value("hcaptcha_token"),
+		c.Params.Value("hcaptcha_word")); err != nil {
 		c.RenderString("false\n" + err.Code)
 	} else {
 		c.RenderString("true")
@@ -56,11 +56,11 @@ func (c Api) ImageAction() {
 
 	reload := false
 
-	if c.Params.Get("hcaptcha_opt") == "refresh" {
+	if c.Params.Value("hcaptcha_opt") == "refresh" {
 		reload = true
 	}
 
-	if img, err := ImageFetch(c.Params.Get("hcaptcha_token"), reload); err != nil {
+	if img, err := ImageFetch(c.Params.Value("hcaptcha_token"), reload); err != nil {
 		c.RenderError(500, err.Code)
 	} else {
 		c.Response.Out.Header().Set("Content-type", "image/png")

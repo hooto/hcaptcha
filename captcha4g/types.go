@@ -30,3 +30,29 @@ type FontList struct {
 	Length    int
 	Items     []*FontEntry
 }
+
+// ErrorMeta provides more information about an api failure.
+type ErrorMeta struct {
+	// A machine-readable description of the type of the error. If this value is
+	// empty there is no information available.
+	Code string `json:"code,omitempty" toml:"code,omitempty"`
+
+	// A human-readable description of the error message.
+	Message string `json:"message,omitempty" toml:"message,omitempty"`
+}
+
+const (
+	ErrCodeBadArgument  = "BadArgument"
+	ErrCodeUnavailable  = "Unavailable"
+	ErrCodeServerError  = "ServerError"
+	ErrCodeNotFound     = "NotFound"
+	ErrCodeAccessDenied = "AccessDenied"
+	ErrCodeUnauthorized = "Unauthorized"
+)
+
+func NewErrorMeta(code, message string) *ErrorMeta {
+	return &ErrorMeta{
+		Code:    code,
+		Message: message,
+	}
+}
