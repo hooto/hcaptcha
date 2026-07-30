@@ -13,8 +13,8 @@
 // limitations under the License.
 
 // This file adds an OPTIONAL gofiber/fiber/v3 entry point (Register) alongside
-// the existing httpsrv WebServerModule. Both coexist so hcaptcha can be served
-// by either framework. The httpsrv support in websrv.go is unchanged.
+// the httpsrv v2 entry point (captcha4g.Register) in websrv.go. Both coexist so
+// hcaptcha can be served by either framework.
 
 package webfiber
 
